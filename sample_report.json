@@ -1,0 +1,38 @@
+{
+    "total_active_committers": 1,
+    "total_repos_with_ghas": 16,
+    "total_repos_without_ghas": 29,
+    "repos_without_ghas_with_active_committers": [
+        "thez-org/central-config"
+    ],
+    "repos_without_ghas_and_committers": [
+        "thez-org/go-gin-example",
+        "thez-org/rails-ex",
+        "thez-org/rails-react-typescript-docker-example",
+        "thez-org/python-twilio-example-apps",
+        "thez-org/fibonacci-webapp-benchmark",
+        "thez-org/terraform-test",
+        "thez-org/auth0-golang-web-app",
+        "thez-org/webapp-go",
+        "thez-org/sysfoo",
+        "thez-org/WebApp",
+        "thez-org/WebApplicationSkeleton",
+        "thez-org/micro-frontend-example",
+        "thez-org/serverless-web-app-example",
+        "thez-org/react-redux-example",
+        "thez-org/msdocs-python-flask-webapp-quickstart",
+        "thez-org/imagebird",
+        "thez-org/python-desktop-examples",
+        "thez-org/python-geeks",
+        "thez-org/Scheduling-App",
+        "thez-org/python-ecommerce",
+        "thez-org/wechat_jump_game",
+        "thez-org/uvicorn-poetry",
+        "thez-org/sandcage-api-python",
+        "thez-org/braintree_rails_example",
+        "thez-org/vulnerable-app",
+        "thez-org/vulnerable-node",
+        "thez-org/vulnerable-node-2",
+        "thez-org/test-public"
+    ]
+}
