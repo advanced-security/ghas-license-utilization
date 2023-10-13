@@ -55,7 +55,7 @@ GHAS activation and coverage optimization
 Total active committers: 1
 Total repositories with GHAS: 16
 Total repositories without GHAS: 29
-Coverage: 35.55555555555556%
+Coverage: 35.56%
 ----------------------------------------
 Turning GHAS on following repositories will not use any new licenses
 1. With active comitters already consume GHAS license:
@@ -96,7 +96,7 @@ or `JSON` for machine parsable output to plug in GHAS enablement script:
 ### Prerequisites
 
 - Python 3.9+
-- Personal Access Token with permissions depending on the scope you plan yo tun it - `repo`, `admin:org`, `admin:enterprise`
+- Personal Access Token with permissions depending on the scope you plan to run it - `repo`, `admin:org`, `admin:enterprise`
 - Active committers report saved locally
 
 ### Running
