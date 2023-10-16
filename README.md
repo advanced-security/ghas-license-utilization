@@ -1,33 +1,33 @@
-# GHAS activation and coverage optimization
+# GHAS Activation and Coverage Optimization
 
-The idea of the project is to optimze the utilization of GHAS licenses within your organization. GHAS has a licensing model that is based on active committers. Each active committer will consume a GHAS licenses. This means that any repositories that this committer is contributing to could have GHAS enabled.
+The idea of the project is to optimize the utilization of GHAS licenses within your organization. GHAS has a licensing model that is based on active committers. Each active committer will consume a GHAS license. This means that any repositories to which this committer is contributing could have GHAS enabled.
 
 Example:
 
-- Developer A is contributing to 3 repositories - Repo1, Repo2, Repo5
-- Developer B is contributing to 2 repositories - Repo2, Repo5
-- GHAS is enabled on Repo1, Repo2
-- Developer A and B are both active committers to Repo5 as well
-- GHAS can be enabled on on Repo5 without consumtions of additional GHAS licenses
+- Developer A is contributing to 3 repositories - `Repo1`, `Repo2`, `Repo5`.
+- Developer B is contributing to 2 repositories - `Repo2`, `Repo5`.
+- GHAS is enabled on `Repo1` and `Repo2`.
+- Developer A and B are both active committers for `Repo5` as well.
+- GHAS can be enabled on `Repo5` without consuming additional GHAS licenses.
 
-## How the script works
+## How the Script Works
 
-The python script takes the inputs:
+The Python script takes the following inputs:
 
-- Active committers - CSV report about active committers in your enterprise
-- GitHub Enterprise slug
-- GitHub Organization slug
-- GitHub Personal Access Token
-- Output file name
-- Output file format (Text or JSON)
+- Active committers: CSV report about active committers in your enterprise.
+- GitHub Enterprise slug.
+- GitHub Organization slug.
+- GitHub Personal Access Token.
+- Output file name.
+- Output file format (Text or JSON).
 
-It will first gather the list of all repositories in the enterprise or organization and their GHAS enabled and craete a list of objects. It will then parse the `Active committers` report and add the active committers to each repository object.
+It will first gather the list of all repositories in the enterprise or organization and their GHAS enabled status and create a list of objects. It will then parse the `Active committers` report and add the active committers to each repository object.
 
-The script will then go through the list and find the repositories that will not require extra GHAS license to enable. It will categorize those into two groups: repositories who's active committers already consume a GHAS license and repositories who do not have active committers.
+The script will then go through the list and find the repositories that will not require extra GHAS licenses to enable. It will categorize those into two groups: repositories whose active committers already consume a GHAS license and repositories that do not have active committers.
 
 It will then output the results into a file.
 
-### Active committers
+### Active Committers
 
 The maximum active committers report is a CSV file that contains the following columns:
 
@@ -38,11 +38,11 @@ theztefan,thez-org/repo_name3,2023-10-06
 theztefan,thez-org/repo_name2,2023-08-06
 ```
 
-We will be using the StaffTools UI to generate this report from the Enterprise Settings of our GitHub Enterprise Cloud instance.
+We will be using the Stafftools UI to generate this report.
 
 ### GHAS status
 
-We are getting the GHAS status for each repository in an organization by calling `GET /orgs/{org}/repos` API call.
+We obtain the GHAS status for each repository in an organization by calling the `GET /orgs/{org}/repos` API endpoint.
 
 ## Output report
 
@@ -72,7 +72,8 @@ Total repositories with GHAS: 45
 Coverage: 100.0%
 ````
 
-or `JSON` for machine parsable output to plug in GHAS enablement script:
+or `JSON`  for machine-parseable output to plug in GHAS enablement script:
+
 ```json
 {
     "total_active_committers": 1,
@@ -93,16 +94,37 @@ or `JSON` for machine parsable output to plug in GHAS enablement script:
 
 ## How to run the script
 
+### Usage
+
+```text
+usage: main.py [-h] --ac-report AC_REPORT [--enterprise ENTERPRISE] [--organization ORGANIZATION] [--output OUTPUT] [--output-format OUTPUT_FORMAT] [--token TOKEN]
+
+GHAS activation and coverage activation
+
+options:
+  -h, --help            show this help message and exit
+  --ac-report AC_REPORT
+                        Path to the active committers report
+  --enterprise ENTERPRISE
+                        Name of the enterprise
+  --organization ORGANIZATION
+                        Name of the organization
+  --output OUTPUT       Path to the output file
+  --output-format OUTPUT_FORMAT
+                        Output format - text or json
+  --token TOKEN         GitHub Personal Access Token (if not set in GITHUB_TOKEN envrionment variable)
+```
+
 ### Prerequisites
 
 - Python 3.9+
-- Personal Access Token with permissions depending on the scope you plan to run it - `repo`, `admin:org`, `admin:enterprise`
+- Personal Access Token (PAT) with permissions depending on the scope you plan to run it - `repo`, `admin:org`, `admin:enterprise`
 - Active committers report saved locally
 
 ### Running
 
-- create a virtual environment - `python3 -m venv venv`
-- activate your virtual environment - `source venv/bin/activate`
-- install dependencies  `pip3 install -r requirements.txt`
+- Create a virtual environment - `python3 -m venv venv`
+- Activate your virtual environment - `source venv/bin/activate`
+- Install dependencies  `pip3 install -r requirements.txt`
 - Set GitHub PAT into `GITHUB_TOKEN` environment variable - `export GITHUB_TOKEN=<token>`
-- run the script `python3 main.py --ac-report ghas_maximum_committers_thezenterprise.csv --org thez-org --enterprise thez-enterprise` 
+- Run the script `python3 main.py --ac-report ghas_maximum_committers_thezenterprise.csv --org thez-org --enterprise thez-enterprise`
