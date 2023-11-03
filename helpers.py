@@ -19,7 +19,7 @@ def parse_arguments():
     parser.add_argument(
         "--ac-report",
         type=str,
-        help="Path to the active committers report",
+        help="Path to the active committers report (required)",
         required=True,
     )
     parser.add_argument(
@@ -31,14 +31,14 @@ def parse_arguments():
     parser.add_argument(
         "--output",
         type=str,
-        help="Path to the output file",
+        help="Path to the output file (default: 'report.md')",
         required=False,
-        default="report.txt",
+        default="report.md",
     )
     parser.add_argument(
         "--output-format",
         type=str,
-        help="Output format - text or json",
+        help="Output format - text or json (default: 'text')",
         required=False,
         default="text",
     )
@@ -47,6 +47,13 @@ def parse_arguments():
         type=str,
         help="GitHub Personal Access Token (if not set in GITHUB_TOKEN envrionment variable)",
         required=False,
+    )
+    parser.add_argument(
+        "--licenses",
+        type=int,
+        help="Number of (still) available GHAS licenses (default: 0)",
+        required=False,
+        default=0,
     )
     args = parser.parse_args()
 

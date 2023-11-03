@@ -6,5 +6,6 @@ __pycache__/
 
 venv
 report.txt
+report.md
 report.json
 *.csv

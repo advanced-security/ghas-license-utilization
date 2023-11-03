@@ -1,5 +1,7 @@
 import csv
 import json
+from itertools import combinations
+from models import Report
 
 
 def add_active_committers(report, repositories):
@@ -7,7 +9,7 @@ def add_active_committers(report, repositories):
         reader = csv.reader(file)
         next(reader)  # Skip the header row
         for row in reader:
-            user_login, org_repo, _ = row
+            user_login, org_repo, *_ = row
             org, repo_name = org_repo.split("/")
             for repo in repositories:
                 if repo.name == repo_name and repo.org == org:
@@ -15,112 +17,150 @@ def add_active_committers(report, repositories):
 
 
 def generate_ghas_coverage_report(repositories):
-    active_committers = set()
-    repos_with_ghas = []
+    result = Report()
+    result.all_repos = repositories
     committers_in_ghas_repos = set()
-    repos_without_ghas_with_active_committers = []
-    repos_without_ghas_and_committers = []
-
+    left_over_repos = []
     for repo in repositories:
         repo_active_committers = repo.get_active_committers()
-        active_committers.update(repo_active_committers)
-
+        result.active_committers.update(repo_active_committers)
         if repo.get_ghas_status():
-            repos_with_ghas.append(repo)
+            result.current_repos_with_ghas.append(repo)
             committers_in_ghas_repos.update(repo_active_committers)
         else:
-            if any(
-                committer in committers_in_ghas_repos
-                for committer in repo_active_committers
-            ):
-                repos_without_ghas_with_active_committers.append(repo)
-            elif not repo_active_committers:
-                repos_without_ghas_and_committers.append(repo)
+            left_over_repos.append(repo)
 
-    total_active_committers = len(active_committers)
-    total_repos_with_ghas = len(repos_with_ghas)
-    total_repos_without_ghas = len(repositories) - total_repos_with_ghas
+    for repo in left_over_repos:
+        active_committers = repo.get_active_committers()
+        if active_committers and all(
+            committer in committers_in_ghas_repos for committer in active_committers
+        ):
+            result.current_repos_without_ghas_with_active_committers.append(repo)
+        elif not active_committers:
+            result.current_repos_without_ghas_and_committers.append(repo)
 
-    return {
-        "total_active_committers": total_active_committers,
-        "total_repos_with_ghas": total_repos_with_ghas,
-        "total_repos_without_ghas": total_repos_without_ghas,
-        "repos_without_ghas_with_active_committers": [
-            repo.get_full_name() for repo in repos_without_ghas_with_active_committers
-        ],
-        "repos_without_ghas_and_committers": [
-            repo.get_full_name() for repo in repos_without_ghas_and_committers
-        ],
-    }
+    result.current_active_commiters = committers_in_ghas_repos
+    left_over_repos = []
+
+    for repo in repositories:
+        if (
+            repo not in result.current_repos_without_ghas_with_active_committers
+            and repo not in result.current_repos_without_ghas_and_committers
+            and repo not in result.current_repos_with_ghas
+        ):
+            left_over_repos.append(repo)
+
+    return result, left_over_repos
 
 
-def write_report(results, output, output_format):
-    if output_format == "json":
-        with open(output, "w") as file:
-            json.dump(results, file)
+def find_combination_with_max_repositories(
+    left_over_repos, license_count, current_active_comitters
+):
+    max_repositories = 0
+    max_new_committers = 0
+    max_combination = None
+
+    for r in range(1, len(left_over_repos) + 1):
+        repo_combinations = combinations(left_over_repos, r)
+
+        for combination in repo_combinations:
+            # Calculate the total number of unique active committers in the combination
+            # without including the current active committers
+            unique_committers = set()
+            for repo in combination:
+                unique_committers.update(repo.get_active_committers())
+                unique_committers.difference_update(current_active_comitters)
+
+            if len(unique_committers) <= license_count:
+                num_repositories = len(combination)
+                if num_repositories > max_repositories:
+                    max_repositories = num_repositories
+                    max_new_committers = unique_committers
+                    max_combination = combination
+
+    return max_combination, max_new_committers
+
+
+def generate_max_coverage_report(repositories, license_count=None):
+    result, left_over_repos = generate_ghas_coverage_report(repositories)
+    if not license_count:
+        return result
+
+    result.max_coverage_repos = []
+
+    max_combination, max_committers = find_combination_with_max_repositories(
+        left_over_repos, license_count, result.current_active_commiters
+    )
+
+    if max_combination is not None:
+        result.max_coverage_repos = max_combination
+        result.new_active_committers = max_committers
     else:
-        with open(output, "w") as file:
-            print(f"GHAS activation and coverage optimization", file=file)
-            print(f"--" * 20, file=file)
-            print(f"# Current coverage", file=file)
+        print("No valid combination found.")
+
+    return result
+
+
+def write_report(report: Report, output_file, output_format):
+    if output_format == "json":
+        with open(output_file, "w") as file:
+            json.dump(report.to_dict(), file)
+    else:
+        with open(output_file, "w") as file:
+            print(f"# GHAS activation and coverage optimization \n", file=file)
+            print(f"---" * 20, file=file)
+            print(f"# Current coverage\n", file=file)
             print(
-                f"Total active committers: {results['total_active_committers']}",
+                f"Total active committers: {report.total_active_committers}",
                 file=file,
             )
             print(
-                f"Total repositories with GHAS: {results['total_repos_with_ghas']}",
+                f"Total repositories with GHAS: {report.total_current_repos_with_ghas}",
                 file=file,
             )
             print(
-                f"Total repositories without GHAS: {results['total_repos_without_ghas']}",
+                f"Total repositories without GHAS: {report.total_current_repos_without_ghas}",
                 file=file,
             )
 
-            coverage_percentage = round(
-                (
-                    results["total_repos_with_ghas"]
-                    / (
-                        results["total_repos_with_ghas"]
-                        + results["total_repos_without_ghas"]
-                    )
-                    * 100
-                ),
-                2,
-            )
-            print(f"Coverage: {coverage_percentage}%", file=file)
+            print(f"Coverage: {report.current_coverage_percentage}%", file=file)
             print(f"--" * 20, file=file)
+            print(f"# Increase coverage with currently consumed licenses \n", file=file)
             print(
-                f"Turning GHAS on following repositories will not use any new licenses",
+                f"**Turning GHAS on following repositories will not consume additional licenses**",
                 file=file,
             )
-            print(f"1. With active comitters already consume GHAS license:", file=file)
-            for repo in results["repos_without_ghas_with_active_committers"]:
+            print(
+                f"- Repositories with active committers already consume GHAS license:",
+                file=file,
+            )
+            for repo in report.current_repos_without_ghas_with_active_committers:
                 print(f"\t - ", repo, file=file)
 
-            print(f"2. Without active committers:", file=file)
-            for repo in results["repos_without_ghas_and_committers"]:
+            print(f"- Repositories without active committers:", file=file)
+            for repo in report.current_repos_without_ghas_and_committers:
                 print(f"\t - ", repo, file=file)
-
-            sum_activated_repos = (
-                len(results["repos_without_ghas_with_active_committers"])
-                + len(results["repos_without_ghas_and_committers"])
-                + results["total_repos_with_ghas"]
-            )
-            coverage_percentage = round(
-                (
-                    sum_activated_repos
-                    / (
-                        results["total_repos_with_ghas"]
-                        + results["total_repos_without_ghas"]
-                    )
-                    * 100
-                ),
-                2,
-            )
             print(f"--" * 20, file=file)
-            print(f"# End state coverage", file=file)
+            if len(report.new_active_committers):
+                print(f"# Maximize coverage with additional licenses \n", file=file)
+                print(
+                    f"**Turning GHAS on following repositories will consume {len(report.new_active_committers)} additional licenses**",
+                    file=file,
+                )
+                print(f"- Combination of repositories to activate GHAS on:", file=file)
+                for repo in report.max_coverage_repos:
+                    print(f"\t - ", repo, file=file)
+                print(
+                    f"\n New active comitters that will consume GHAS license:",
+                    file=file,
+                )
+                for committer in report.new_active_committers:
+                    print(f"\t - ", committer, file=file)
+                print(f"--" * 20, file=file)
+
+            print(f"# End state coverage \n", file=file)
             print(
-                f"Total repositories with GHAS: {sum_activated_repos}",
+                f"Total repositories with GHAS: {report.new_total_ghas_repos}",
                 file=file,
             )
-            print(f"Coverage: {coverage_percentage}%", file=file)
+            print(f"Coverage: {report.new_coverage_percentage}%", file=file)
