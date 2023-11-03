@@ -247,7 +247,7 @@ options:
     python3 main.py --ac-report ghas_maximum_committers_thezorg.csv --org thez-org --licenses 10  --output-format text --output report.md
     ```
 
-    **Note: After enabling GHAS on the new repositories to get maximum coverage, you will want to re-run the script again to see if there are any new repositories that can be enabled with the new active committers. Currently, the script doesn't calculate the new coverage after enabling GHAS on the new repositories.**
+    **Note: After enabling GHAS on the new repositories to get maximum coverage, you will want to re-run the script again to see if there are any new repositories that can be enabled with the new active committers.**
 
 3. Find which repositories to start GHAS enablement in an organization to achieve the maximum coverage with the licenses available.
 
