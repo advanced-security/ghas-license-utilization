@@ -1,4 +1,3 @@
-import logging
 from dotenv import load_dotenv
 from github import *
 from report import *
@@ -39,10 +38,8 @@ def main():
 
     # Generate report and print report
     logger.info(f"Generating report...")
-    results = generate_ghas_coverage_report(total_repositories)
-
+    results = generate_max_coverage_report(total_repositories, args.licenses)
     write_report(results, args.output, args.output_format)
-    logger.info(f"Report written to: {args.output}")
 
 
 if __name__ == "__main__":
