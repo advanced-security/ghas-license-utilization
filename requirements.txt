@@ -1,3 +1,4 @@
 requests
 setuptools
 python-dotenv
+colorama

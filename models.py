@@ -1,5 +1,7 @@
 class Repository:
-    def __init__(self, name, org, ghas_status, pushed_at, active_committers=None):
+    def __init__(
+        self, name, org, ghas_status, visibility, pushed_at, active_committers=None
+    ):
         self.name = name
         self.org = org
         self.ghas_status = ghas_status
@@ -7,9 +9,13 @@ class Repository:
         self.active_committers = (
             active_committers if active_committers is not None else []
         )
+        self.visibility = visibility
 
     def add_committer(self, committer):
         self.active_committers.append(committer)
+
+    def add_active_committers(self, committers):
+        self.active_committers.extend(committers)
 
     def get_active_committers(self):
         return self.active_committers
@@ -23,14 +29,18 @@ class Repository:
     def get_full_name(self):
         return self.org + "/" + self.name
 
+    def get_visibility(self):
+        return self.visibility
+
     def __str__(self):
-        return f"Repository: {self.name} | GHAS Status: {self.ghas_status} | Last Pushed At: {self.pushed_at} | Active Committers: {self.active_committers}"
+        return f"Repository: {self.name} | GHAS Status: {self.ghas_status} | Visibility: {self.visibility} | Last Pushed At: {self.pushed_at} | Active Committers: {self.active_committers}"
 
     def to_dict(self):
         return {
             "name": self.name,
             "org": self.org,
             "ghas_status": self.ghas_status,
+            "visibility": self.visibility,
             "pushed_at": self.pushed_at,
             "active_committers": self.active_committers,
         }
@@ -45,6 +55,7 @@ class Report:
         current_repos_with_ghas=[],
         current_repos_without_ghas_with_active_committers=[],
         current_repos_without_ghas_and_committers=[],
+        current_repos_without_ghas_and_public=[],
         new_active_committers=set(),
         max_coverage_repos=[],
     ):
@@ -57,6 +68,9 @@ class Report:
         )
         self.current_repos_without_ghas_and_committers = (
             current_repos_without_ghas_and_committers
+        )
+        self.current_repos_without_ghas_and_public = (
+            current_repos_without_ghas_and_public
         )
         self.new_active_committers = new_active_committers
         self.max_coverage_repos = max_coverage_repos
@@ -86,6 +100,7 @@ class Report:
         sum_activated_repos = (
             len(self.current_repos_without_ghas_with_active_committers)
             + len(self.current_repos_without_ghas_and_committers)
+            + len(self.current_repos_without_ghas_and_public)
             + self.total_current_repos_with_ghas
             + len(self.max_coverage_repos)
         )
@@ -97,6 +112,7 @@ class Report:
             self.total_current_repos_with_ghas
             + len(self.current_repos_without_ghas_and_committers)
             + len(self.current_repos_without_ghas_with_active_committers)
+            + len(self.current_repos_without_ghas_and_public)
             + len(self.max_coverage_repos)
         )
 
@@ -113,6 +129,8 @@ class Report:
             \tRepos without GHAS and Active Committers: {', '.join(f"{repo.name} ({', '.join(repo.get_active_committers())})" for repo in self.current_repos_without_ghas_with_active_committers)} \n'
             Total Repositories without GHAS and Committers: {len(self.current_repos_without_ghas_and_committers)} \n
             \tRepos without GHAS and Committers: {', '.join(repo.name for repo in self.current_repos_without_ghas_and_committers)} \n
+            Total Repositories without GHAS and Public: {len(self.current_repos_without_ghas_and_public)} \n
+            \tRepos without GHAS and Public: {', '.join(repo.name for repo in self.current_repos_without_ghas_and_public)} \n
             Total New Active Committers: {len(self.new_active_committers)} \n
             \tNew Active Committers: {', '.join(self.new_active_committers)} \n
             Repositories to Max Coverage: {len(self.max_coverage_repos)} \n
@@ -134,6 +152,9 @@ class Report:
             "current_repos_without_ghas_and_committers": [
                 repo.to_dict()
                 for repo in self.current_repos_without_ghas_and_committers
+            ],
+            "current_repos_without_ghas_and_public": [
+                repo.to_dict() for repo in self.current_repos_without_ghas_and_public
             ],
             "new_active_committers": list(self.new_active_committers),
             "max_coverage_repos": [repo.to_dict() for repo in self.max_coverage_repos],
