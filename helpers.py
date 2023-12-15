@@ -19,8 +19,8 @@ def parse_arguments():
     parser.add_argument(
         "--ac-report",
         type=str,
-        help="Path to the active committers report (required)",
-        required=True,
+        help="Path to the active committers report",
+        required=False,
     )
     parser.add_argument(
         "--enterprise", type=str, help="Name of the enterprise", required=False

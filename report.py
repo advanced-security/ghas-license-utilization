@@ -1,19 +1,6 @@
-import csv
 import json
 from itertools import combinations
 from models import Report
-
-
-def add_active_committers(report, repositories):
-    with open(report, "r") as file:
-        reader = csv.reader(file)
-        next(reader)  # Skip the header row
-        for row in reader:
-            user_login, org_repo, *_ = row
-            org, repo_name = org_repo.split("/")
-            for repo in repositories:
-                if repo.name == repo_name and repo.org == org:
-                    repo.add_committer(user_login)
 
 
 def generate_ghas_coverage_report(repositories):
@@ -21,6 +8,7 @@ def generate_ghas_coverage_report(repositories):
     result.all_repos = repositories
     committers_in_ghas_repos = set()
     left_over_repos = []
+
     for repo in repositories:
         repo_active_committers = repo.get_active_committers()
         result.active_committers.update(repo_active_committers)
@@ -36,8 +24,10 @@ def generate_ghas_coverage_report(repositories):
             committer in committers_in_ghas_repos for committer in active_committers
         ):
             result.current_repos_without_ghas_with_active_committers.append(repo)
-        elif not active_committers:
+        elif not active_committers and repo.get_visibility() != "public":
             result.current_repos_without_ghas_and_committers.append(repo)
+        elif repo.get_visibility() == "public":
+            result.current_repos_without_ghas_and_public.append(repo)
 
     result.current_active_commiters = committers_in_ghas_repos
     left_over_repos = []
@@ -47,6 +37,7 @@ def generate_ghas_coverage_report(repositories):
             repo not in result.current_repos_without_ghas_with_active_committers
             and repo not in result.current_repos_without_ghas_and_committers
             and repo not in result.current_repos_with_ghas
+            and repo not in result.current_repos_without_ghas_and_public
         ):
             left_over_repos.append(repo)
 
@@ -81,6 +72,33 @@ def find_combination_with_max_repositories(
     return max_combination, max_new_committers
 
 
+def find_combination_with_max_repositories_greedy(
+    left_over_repos, license_count, current_active_comitters
+):
+    # Sort the repositories in descending order by the number of unique active committers
+    sorted_repos = sorted(
+        left_over_repos,
+        key=lambda repo: len(
+            set(repo.get_active_committers()).difference(current_active_comitters)
+        ),
+        reverse=True,
+    )
+
+    combination = []
+    unique_committers = set()
+
+    # Add repositories to the combination until reaching the license limit
+    for repo in sorted_repos:
+        new_committers = set(repo.get_active_committers()).difference(
+            current_active_comitters
+        )
+        if len(unique_committers.union(new_committers)) <= license_count:
+            combination.append(repo)
+            unique_committers.update(new_committers)
+
+    return combination, unique_committers
+
+
 def generate_max_coverage_report(repositories, license_count=None):
     result, left_over_repos = generate_ghas_coverage_report(repositories)
     if not license_count:
@@ -88,7 +106,7 @@ def generate_max_coverage_report(repositories, license_count=None):
 
     result.max_coverage_repos = []
 
-    max_combination, max_committers = find_combination_with_max_repositories(
+    max_combination, max_committers = find_combination_with_max_repositories_greedy(
         left_over_repos, license_count, result.current_active_commiters
     )
 
@@ -107,7 +125,7 @@ def write_report(report: Report, output_file, output_format):
             json.dump(report.to_dict(), file)
     else:
         with open(output_file, "w") as file:
-            print(f"# GHAS activation and coverage optimization \n", file=file)
+            print(f"# GHAS activation and coverage optimization\n", file=file)
             print(f"---" * 20, file=file)
             print(f"# Current coverage\n", file=file)
             print(
@@ -125,7 +143,7 @@ def write_report(report: Report, output_file, output_format):
 
             print(f"Coverage: {report.current_coverage_percentage}%", file=file)
             print(f"--" * 20, file=file)
-            print(f"# Increase coverage with currently consumed licenses \n", file=file)
+            print(f"# Increase coverage with currently consumed licenses\n", file=file)
             print(
                 f"**Turning GHAS on following repositories will not consume additional licenses**",
                 file=file,
@@ -137,7 +155,17 @@ def write_report(report: Report, output_file, output_format):
             for repo in report.current_repos_without_ghas_with_active_committers:
                 print(f"\t - ", repo, file=file)
 
-            print(f"- Repositories without active committers:", file=file)
+            print(
+                f"- Public repositories (do not required GHAS license):",
+                file=file,
+            )
+            for repo in report.current_repos_without_ghas_and_public:
+                print(f"\t - ", repo, file=file)
+
+            print(
+                f"- Private and Internal repositories without active committers:",
+                file=file,
+            )
             for repo in report.current_repos_without_ghas_and_committers:
                 print(f"\t - ", repo, file=file)
             print(f"--" * 20, file=file)

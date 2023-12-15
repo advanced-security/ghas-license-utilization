@@ -4,15 +4,15 @@
             "name": "open-book",
             "org": "thez-org",
             "ghas_status": true,
-            "pushed_at": "2023-10-25T12:25:07Z",
-            "active_committers": [
-                "theztefan"
-            ]
+            "visibility": "internal",
+            "pushed_at": "2023-11-22T11:39:41Z",
+            "active_committers": []
         },
         {
             "name": "ado-project-migration",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2022-05-12T10:54:04Z",
             "active_committers": []
         },
@@ -20,6 +20,7 @@
             "name": "new-secret-demo",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-02-24T16:31:40Z",
             "active_committers": []
         },
@@ -27,6 +28,7 @@
             "name": "dependancy-compare",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-07-24T13:37:04Z",
             "active_committers": []
         },
@@ -34,23 +36,360 @@
             "name": "octo-gallery",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-07-25T18:43:20Z",
-            "active_committers": []
+            "active_committers": [
+                "theztefan"
+            ]
         },
         {
             "name": "gradle-dependancy-test",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-09-06T15:09:18Z",
             "active_committers": []
+        },
+        {
+            "name": "elc-demo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-07-09T03:04:58Z",
+            "active_committers": []
+        },
+        {
+            "name": "hm-demo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-10-17T21:37:47Z",
+            "active_committers": []
+        },
+        {
+            "name": "new-test-repo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2022-12-16T13:23:15Z",
+            "active_committers": []
+        },
+        {
+            "name": "goserver",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-01-09T16:36:30Z",
+            "active_committers": []
+        },
+        {
+            "name": "autodep",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-01-12T14:17:21Z",
+            "active_committers": []
+        },
+        {
+            "name": "autodep-priv",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-12T14:17:41Z",
+            "active_committers": []
+        },
+        {
+            "name": "exercise-enable-code-scanning-using-codeql",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-19T13:27:57Z",
+            "active_committers": []
+        },
+        {
+            "name": "exercise-remove-commit-history",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-19T13:31:20Z",
+            "active_committers": []
+        },
+        {
+            "name": "ghas-devtraining-gusshawstewart",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-02-03T13:11:39Z",
+            "active_committers": []
+        },
+        {
+            "name": "go-gin-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-07-03T08:59:02Z",
+            "active_committers": []
+        },
+        {
+            "name": "rails-ex",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T16:00:58Z",
+            "active_committers": []
+        },
+        {
+            "name": "rails-react-typescript-docker-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-10T12:15:50Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-twilio-example-apps",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-21T11:14:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "fibonacci-webapp-benchmark",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-22T15:33:22Z",
+            "active_committers": []
+        },
+        {
+            "name": "terraform-test",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-23T11:46:53Z",
+            "active_committers": []
+        },
+        {
+            "name": "auth0-golang-web-app",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-28T08:59:47Z",
+            "active_committers": []
+        },
+        {
+            "name": "webapp-go",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-28T08:59:43Z",
+            "active_committers": []
+        },
+        {
+            "name": "sysfoo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:26:30Z",
+            "active_committers": []
+        },
+        {
+            "name": "WebApp",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:27:14Z",
+            "active_committers": []
+        },
+        {
+            "name": "WebApplicationSkeleton",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:26:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "micro-frontend-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:40:34Z",
+            "active_committers": []
+        },
+        {
+            "name": "serverless-web-app-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:40:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "react-redux-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:54:02Z",
+            "active_committers": []
+        },
+        {
+            "name": "scan-public-actions",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-03-14T11:36:51Z",
+            "active_committers": []
+        },
+        {
+            "name": "msdocs-python-flask-webapp-quickstart",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2022-11-05T01:52:32Z",
+            "active_committers": []
+        },
+        {
+            "name": "imagebird",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T15:48:07Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-desktop-examples",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:30:12Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-geeks",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T15:53:00Z",
+            "active_committers": []
+        },
+        {
+            "name": "Scheduling-App",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-06T10:22:59Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-ecommerce",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:33:00Z",
+            "active_committers": []
+        },
+        {
+            "name": "wechat_jump_game",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:36:18Z",
+            "active_committers": []
+        },
+        {
+            "name": "uvicorn-poetry",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T12:02:05Z",
+            "active_committers": []
+        },
+        {
+            "name": "sandcage-api-python",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T12:07:41Z",
+            "active_committers": []
+        },
+        {
+            "name": "braintree_rails_example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T16:04:44Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-app",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2018-02-07T12:02:03Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-node",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-07-27T11:09:36Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-node-2",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-04-12T13:30:17Z",
+            "active_committers": []
+        },
+        {
+            "name": "central-config",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-07-24T13:36:49Z",
+            "active_committers": []
+        },
+        {
+            "name": "test-public",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-10-11T12:39:53Z",
+            "active_committers": []
+        },
+        {
+            "name": "empty-one",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-10-25T12:47:33Z",
+            "active_committers": [
+                "theztefan"
+            ]
         },
         {
             "name": "hilly",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-11-01T11:43:43Z",
             "active_committers": [
                 "hill-scribes-0x",
+                "theztefan"
+            ]
+        },
+        {
+            "name": "dep-review-test",
+            "org": "thez-org",
+            "ghas_status": true,
+            "visibility": "internal",
+            "pushed_at": "2023-11-13T16:29:51Z",
+            "active_committers": [
                 "theztefan"
             ]
         }
@@ -67,7 +406,16 @@
             "name": "open-book",
             "org": "thez-org",
             "ghas_status": true,
-            "pushed_at": "2023-10-25T12:25:07Z",
+            "visibility": "internal",
+            "pushed_at": "2023-11-22T11:39:41Z",
+            "active_committers": []
+        },
+        {
+            "name": "dep-review-test",
+            "org": "thez-org",
+            "ghas_status": true,
+            "visibility": "internal",
+            "pushed_at": "2023-11-13T16:29:51Z",
             "active_committers": [
                 "theztefan"
             ]
@@ -75,9 +423,20 @@
     ],
     "current_repos_without_ghas_with_active_committers": [
         {
+            "name": "octo-gallery",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-07-25T18:43:20Z",
+            "active_committers": [
+                "theztefan"
+            ]
+        },
+        {
             "name": "empty-one",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "private",
             "pushed_at": "2023-10-25T12:47:33Z",
             "active_committers": [
                 "theztefan"
@@ -89,6 +448,7 @@
             "name": "ado-project-migration",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2022-05-12T10:54:04Z",
             "active_committers": []
         },
@@ -96,6 +456,7 @@
             "name": "new-secret-demo",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-02-24T16:31:40Z",
             "active_committers": []
         },
@@ -103,13 +464,329 @@
             "name": "dependancy-compare",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-07-24T13:37:04Z",
+            "active_committers": []
+        },
+        {
+            "name": "gradle-dependancy-test",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-09-06T15:09:18Z",
+            "active_committers": []
+        },
+        {
+            "name": "elc-demo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-07-09T03:04:58Z",
+            "active_committers": []
+        },
+        {
+            "name": "hm-demo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-10-17T21:37:47Z",
+            "active_committers": []
+        },
+        {
+            "name": "new-test-repo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2022-12-16T13:23:15Z",
+            "active_committers": []
+        },
+        {
+            "name": "goserver",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-01-09T16:36:30Z",
+            "active_committers": []
+        },
+        {
+            "name": "autodep",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-01-12T14:17:21Z",
+            "active_committers": []
+        },
+        {
+            "name": "autodep-priv",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-12T14:17:41Z",
+            "active_committers": []
+        },
+        {
+            "name": "exercise-enable-code-scanning-using-codeql",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-19T13:27:57Z",
+            "active_committers": []
+        },
+        {
+            "name": "exercise-remove-commit-history",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-01-19T13:31:20Z",
+            "active_committers": []
+        },
+        {
+            "name": "ghas-devtraining-gusshawstewart",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "private",
+            "pushed_at": "2023-02-03T13:11:39Z",
+            "active_committers": []
+        },
+        {
+            "name": "scan-public-actions",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-03-14T11:36:51Z",
+            "active_committers": []
+        },
+        {
+            "name": "central-config",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "internal",
+            "pushed_at": "2023-07-24T13:36:49Z",
+            "active_committers": []
+        }
+    ],
+    "current_repos_without_ghas_and_public": [
+        {
+            "name": "go-gin-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-07-03T08:59:02Z",
+            "active_committers": []
+        },
+        {
+            "name": "rails-ex",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T16:00:58Z",
+            "active_committers": []
+        },
+        {
+            "name": "rails-react-typescript-docker-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-10T12:15:50Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-twilio-example-apps",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-21T11:14:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "fibonacci-webapp-benchmark",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-22T15:33:22Z",
+            "active_committers": []
+        },
+        {
+            "name": "terraform-test",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-23T11:46:53Z",
+            "active_committers": []
+        },
+        {
+            "name": "auth0-golang-web-app",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-28T08:59:47Z",
+            "active_committers": []
+        },
+        {
+            "name": "webapp-go",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-02-28T08:59:43Z",
+            "active_committers": []
+        },
+        {
+            "name": "sysfoo",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:26:30Z",
+            "active_committers": []
+        },
+        {
+            "name": "WebApp",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:27:14Z",
+            "active_committers": []
+        },
+        {
+            "name": "WebApplicationSkeleton",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:26:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "micro-frontend-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:40:34Z",
+            "active_committers": []
+        },
+        {
+            "name": "serverless-web-app-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:40:38Z",
+            "active_committers": []
+        },
+        {
+            "name": "react-redux-example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-01T08:54:02Z",
+            "active_committers": []
+        },
+        {
+            "name": "msdocs-python-flask-webapp-quickstart",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2022-11-05T01:52:32Z",
+            "active_committers": []
+        },
+        {
+            "name": "imagebird",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T15:48:07Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-desktop-examples",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:30:12Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-geeks",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T15:53:00Z",
+            "active_committers": []
+        },
+        {
+            "name": "Scheduling-App",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-06T10:22:59Z",
+            "active_committers": []
+        },
+        {
+            "name": "python-ecommerce",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:33:00Z",
+            "active_committers": []
+        },
+        {
+            "name": "wechat_jump_game",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-02T16:36:18Z",
+            "active_committers": []
+        },
+        {
+            "name": "uvicorn-poetry",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T12:02:05Z",
+            "active_committers": []
+        },
+        {
+            "name": "sandcage-api-python",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T12:07:41Z",
+            "active_committers": []
+        },
+        {
+            "name": "braintree_rails_example",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-03-03T16:04:44Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-app",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2018-02-07T12:02:03Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-node",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-07-27T11:09:36Z",
+            "active_committers": []
+        },
+        {
+            "name": "vulnerable-node-2",
+            "org": "thez-org",
+            "ghas_status": false,
+            "visibility": "public",
+            "pushed_at": "2023-04-12T13:30:17Z",
             "active_committers": []
         },
         {
             "name": "test-public",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "public",
             "pushed_at": "2023-10-11T12:39:53Z",
             "active_committers": []
         }
@@ -122,6 +799,7 @@
             "name": "hilly",
             "org": "thez-org",
             "ghas_status": false,
+            "visibility": "internal",
             "pushed_at": "2023-11-01T11:43:43Z",
             "active_committers": [
                 "hill-scribes-0x",
