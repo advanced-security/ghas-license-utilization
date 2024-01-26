@@ -45,7 +45,7 @@ def parse_arguments():
     parser.add_argument(
         "--token",
         type=str,
-        help="GitHub Personal Access Token (if not set in GITHUB_TOKEN envrionment variable)",
+        help="GitHub Personal Access Token (if not set in GITHUB_TOKEN environment variable)",
         required=False,
     )
     parser.add_argument(

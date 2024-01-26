@@ -1,14 +1,17 @@
 # GHAS Activation and Coverage Optimization
 
-The purpose of this project is to optimize the utilization of GHAS (GitHub Advanced Security) licenses within your organization. GHAS operates on a licensing model based on active committers. Each active committer consumes one GHAS license, meaning GHAS can be enabled for any repository to which this committer contributes.
+> [!NOTE]
+> This repository is not officially supported by GitHub.
+
+This project aims to optimize the use of GitHub Advanced Security (GHAS) licenses within your organization. [GHAS has a billing and licensing model](https://docs.github.com/en/enterprise-cloud@latest/billing/managing-billing-for-github-advanced-security/about-billing-for-github-advanced-security) based on unique active committers. Each unique active committer consumes one GHAS license, so GHAS can be enabled for any extra repositories that are contributed to only by the committers to the existing set of GHAS-enabled repositories.
 
 **Example:**
 
-- Developer A contributes to 3 repositories - `Repo1`, `Repo2`, `Repo5`.
+- Developer A contributes to  3 repositories - `Repo1`, `Repo2`, `Repo5`.
 - Developer B contributes to 2 repositories - `Repo2`, `Repo5`.
 - GHAS is enabled on `Repo1` and `Repo2`.
 - Both Developer A and B are active committers to `Repo5`.
-- Enabling GHAS on `Repo5` does not require additional GHAS licenses.
+- Enabling GHAS on `Repo5` does not require any additional GHAS licenses.
 
 ## Use Cases
 
@@ -28,11 +31,11 @@ This tool assists in three primary practical scenarios:
 The Python script processes the following inputs:
 
 - Active committers:
-    1. Parsing a CSV report on maximum active committers in your enterprise, or [preferably]
+    1. Parsing a CSV report on maximum active committers in your enterprise (preferred, but requires GitHub staff assistance) or
     2. Finding active committers via the GraphQL API (experimental and slower).
 - GitHub Enterprise slug.
 - GitHub Organization slug.
-- GitHub Personal Access Token.
+- GitHub Personal Access Token (PAT)
 - Number of available GHAS licenses.
 - Output file name.
 - Output file format (Text or JSON).
@@ -51,7 +54,7 @@ Finally, it outputs the results in the chosen file format.
 
 ### Active Committers
 
-The script uses the `Max active committers` report or the GraphQL API to obtain the list of active committers for each repository. The maximum active committers report is preferred way as it runs the script faster and is more reliable. The GraphQL API is experimental and slower but can be used if the `Max active committers` report is not available.
+The script uses the `Max active committers` report or the [GraphQL API](https://docs.github.com/en/enterprise-cloud@latest/graphql) to obtain the list of active committers for each repository. The maximum active committers report is preferred way as it runs the script faster and is more reliable. The GraphQL API is experimental and slower but can be used if the `Max active committers` report is not available.
 
 ```csv
 User login,Organization / repository,Last pushed date
@@ -62,7 +65,7 @@ theztefan,thez-org/repo_name2,2023-08-06
 
 ### GHAS Status
 
-The GHAS status for each repository in an organization is obtained by calling the GET /orgs/{org}/repos API endpoint.
+The GHAS status for each repository in an organization is obtained by calling the [`GET /orgs/{org}/repos`](https://docs.github.com/en/enterprise-cloud@latest/rest/repos/repos?apiVersion=2022-11-28) API endpoint.
 
 ## Output Report
 
@@ -150,9 +153,7 @@ or `JSON` for machine-parseable output to plug in your GHAS enablement automatio
             "name": "empty-one",
             "org": "thez-org",
             "ghas_status": false,
-            "pushed_at": "2023-10-25T12:
-
-47:33Z",
+            "pushed_at": "2023-10-25T12:47:33Z",
             "active_committers": [
                 "theztefan"
             ]
@@ -242,14 +243,17 @@ options:
   --output OUTPUT       Path to the output file (default: 'report.md')
   --output-format OUTPUT_FORMAT
                         Output format - text or json (default: 'text')
-  --token TOKEN         GitHub Personal Access Token (if not set in GITHUB_TOKEN envrionment variable)
+  --token TOKEN         GitHub Personal Access Token (if not set in GITHUB_TOKEN environment variable)
   --licenses LICENSES   Number of (still) available GHAS licenses (default: 0)
 ```
 
-You would need to provide:
+You must provide:
+
+- `--organization` and/or `--enterprise` parameters to specify the scope of the script.
+
+Other parameters are optional, but note:
 
 - `--ac-report` with the path to the Max Active Committers report. If left empty, the script will gather the data from the GraphQL API.
-- `--organization` and/or `--enterprise` parameters to specify the scope of the script.
 
 ### Prerequisites
 
@@ -298,3 +302,21 @@ You would need to provide:
     # Gather Active Commiters from API
     python3 main.py --org thez-org --licenses 600  --output-format json --output report.json    
     ```
+
+## License
+
+This project is licensed under the terms of the MIT open source license. Please refer to the [LICENSE](LICENSE) for the full terms.
+
+## Maintainers
+
+See [CODEOWNERS](CODEOWNERS) for the list of maintainers.
+
+## Support
+
+> ℹ️ This is an _unofficial_ tool created by GitHub staff, and is not officially supported by GitHub.
+
+See the [SUPPORT](SUPPORT.md) file.
+
+## Background
+
+See the [CHANGELOG](CHANGELOG.md), [CONTRIBUTING](CONTRIBUTING.md), [SECURITY](SECURITY.md), [SUPPORT](SUPPORT.md), [CODE OF CONDUCT](CODE_OF_CONDUCT.md) and [PRIVACY](PRIVACY.md) files for more information.
