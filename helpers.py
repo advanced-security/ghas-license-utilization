@@ -67,7 +67,8 @@ def parse_arguments():
     if args.enterprise is None and args.organization is None:
         parser.error("Either --enterprise or --organization must be provided.")
 
-    token = os.getenv("GITHUB_TOKEN") or args.token
+    # Prioritize command line token over environment variable
+    token = args.token or os.getenv("GITHUB_TOKEN")
     if token is None:
         parser.error(
             "Either GITHUB_TOKEN environment variable or --token must be provided."

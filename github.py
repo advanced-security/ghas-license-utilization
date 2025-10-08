@@ -3,6 +3,7 @@ import csv
 import time
 import threading
 import concurrent.futures
+import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from models import Repository
@@ -73,7 +74,24 @@ def get_ghas_status_for_repos(org, token, server_url="https://api.github.com"):
 
         handle_rate_limit(response)
 
+        # Check for HTTP errors
+        if response.status_code != 200:
+            logger.error(f"HTTP {response.status_code} error for URL {url}")
+            logger.error(f"Response: {response.text}")
+            if response.status_code == 401:
+                raise Exception(f"Authentication failed for organization {org}. Please check your GitHub token is valid for the server {server_url}")
+            elif response.status_code == 404:
+                raise Exception(f"Organization '{org}' not found or not accessible. Please check the organization name and your token permissions.")
+            else:
+                raise Exception(f"Failed to fetch repositories for organization {org}. Status: {response.status_code}")
+
         data = response.json()
+        
+        # Check if data is a list (successful response) or dict (error response)
+        if not isinstance(data, list):
+            logger.error(f"Unexpected response format: {data}")
+            raise Exception(f"API returned an error: {data.get('message', 'Unknown error')}")
+            
         for repo_data in data:
             owner, name = repo_data["full_name"].split("/")
             ghas_status = (
@@ -96,7 +114,9 @@ def get_ghas_status_for_repos(org, token, server_url="https://api.github.com"):
 def get_active_committers_in_last_90_days(org, repo, token, server_url="https://api.github.com"):
     # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
     if server_url != "https://api.github.com":
-        graphql_url = f"{server_url}/graphql"
+        # For GHES: Remove any /api/vX suffix to get base URL (supports v3, v4, v44, etc.)
+        base_url = re.sub(r'/api/v\d+$', '', server_url)
+        graphql_url = f"{base_url}/api/graphql"
     else:
         graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}"}
@@ -147,14 +167,30 @@ def get_active_committers_in_last_90_days(org, repo, token, server_url="https://
 
         if response.status_code != 200:
             logger.info(f"Response: {response.json()}")
-            next
+            continue
 
         if response.status_code == 401:
             logger.info(f"Insufficient permissions token provided.")
             break
 
         data = response.json()
+        
+        # Check for GraphQL errors
+        if "errors" in data:
+            logger.error(f"GraphQL errors for {org}/{repo}: {data['errors']}")
+            break
+            
+        # Check if data structure is valid
+        if "data" not in data or not data["data"] or "repository" not in data["data"]:
+            logger.error(f"Invalid GraphQL response structure for {org}/{repo}: {data}")
+            break
+            
         repository = data["data"]["repository"]
+        
+        # Handle case where repository is None (e.g., doesn't exist or no access)
+        if repository is None:
+            logger.warning(f"Repository {org}/{repo} not found or not accessible")
+            break
         refs = repository.get("refs")
         visibility = repository.get("visibility")
 
@@ -189,7 +225,9 @@ def get_active_committers_in_last_90_days(org, repo, token, server_url="https://
 def get_orgs_in_ent(enterprise_name, token, server_url="https://api.github.com"):
     # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
     if server_url != "https://api.github.com":
-        graphql_url = f"{server_url}/graphql"
+        # For GHES: Remove any /api/vX suffix to get base URL (supports v3, v4, v44, etc.)
+        base_url = re.sub(r'/api/v\d+$', '', server_url)
+        graphql_url = f"{base_url}/api/graphql"
     else:
         graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}", "X-Github-Next-Global-ID": "true"}
