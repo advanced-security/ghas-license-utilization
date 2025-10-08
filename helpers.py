@@ -55,6 +55,13 @@ def parse_arguments():
         required=False,
         default=0,
     )
+    parser.add_argument(
+        "--server-url",
+        type=str,
+        help="GitHub Server URL (default: https://api.github.com for GitHub.com, or https://HOSTNAME/api/v3 for GHES)",
+        required=False,
+        default="https://api.github.com",
+    )
     args = parser.parse_args()
 
     if args.enterprise is None and args.organization is None:

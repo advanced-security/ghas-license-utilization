@@ -15,7 +15,7 @@ RATE_LIMIT_LOCK = threading.Lock()
 MAX_WORKERS = 5
 
 
-def add_active_committers(report, repositories, token):
+def add_active_committers(report, repositories, token, server_url="https://api.github.com"):
     try:
         with open(report, "r") as file:
             reader = csv.reader(file)
@@ -31,7 +31,7 @@ def add_active_committers(report, repositories, token):
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             futures = [
                 executor.submit(
-                    get_active_committers_in_last_90_days, repo.org, repo.name, token
+                    get_active_committers_in_last_90_days, repo.org, repo.name, token, server_url
                 )
                 for repo in repositories
             ]
@@ -50,20 +50,20 @@ def get_organizations(args, token):
     if not args.enterprise:
         orgs_in_ent.append(args.organization)
     else:
-        orgs_in_ent = get_orgs_in_ent(args.enterprise, token)
+        orgs_in_ent = get_orgs_in_ent(args.enterprise, token, args.server_url)
     return orgs_in_ent
 
 
-def process_organizations(orgs_in_ent, token):
+def process_organizations(orgs_in_ent, token, server_url="https://api.github.com"):
     total_repositories = []
     for i, org in enumerate(orgs_in_ent, start=1):
         logger.info(f"[{i}/{len(orgs_in_ent)}] Processing organization: {org}")
-        total_repositories.extend(get_ghas_status_for_repos(org, token))
+        total_repositories.extend(get_ghas_status_for_repos(org, token, server_url))
     return total_repositories
 
 
-def get_ghas_status_for_repos(org, token):
-    url = f"https://api.github.com/orgs/{org}/repos?per_page=100"
+def get_ghas_status_for_repos(org, token, server_url="https://api.github.com"):
+    url = f"{server_url}/orgs/{org}/repos?per_page=100"
     headers = {"Authorization": f"token {token}"}
     page = 1
     repos = []
@@ -93,8 +93,12 @@ def get_ghas_status_for_repos(org, token):
     return repos
 
 
-def get_active_committers_in_last_90_days(org, repo, token):
-    url = "https://api.github.com/graphql"
+def get_active_committers_in_last_90_days(org, repo, token, server_url="https://api.github.com"):
+    # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
+    if server_url != "https://api.github.com":
+        graphql_url = f"{server_url}/graphql"
+    else:
+        graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}"}
     active_committers = set()
 
@@ -137,7 +141,7 @@ def get_active_committers_in_last_90_days(org, repo, token):
         since = (datetime.now() - timedelta(days=90)).isoformat()
         variables = {"org": org, "repo": repo, "since": since, "after": end_cursor}
         payload = {"query": query, "variables": variables}
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(graphql_url, headers=headers, json=payload)
 
         handle_rate_limit(response)
 
@@ -182,8 +186,12 @@ def get_active_committers_in_last_90_days(org, repo, token):
     return list(active_committers)
 
 
-def get_orgs_in_ent(enterprise_name, token):
-    url = "https://api.github.com/graphql"
+def get_orgs_in_ent(enterprise_name, token, server_url="https://api.github.com"):
+    # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
+    if server_url != "https://api.github.com":
+        graphql_url = f"{server_url}/graphql"
+    else:
+        graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}", "X-Github-Next-Global-ID": "true"}
     orgs = []
     end_cursor = None
@@ -205,7 +213,7 @@ def get_orgs_in_ent(enterprise_name, token):
         """
         variables = {"enterprise": enterprise_name, "after": end_cursor}
         payload = {"query": query, "variables": variables}
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(graphql_url, headers=headers, json=payload)
 
         handle_rate_limit(response)
 

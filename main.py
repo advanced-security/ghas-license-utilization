@@ -14,10 +14,10 @@ def main():
     # Gather all data needed for the report - all orgs in the enterprise, repositories in orgs and active committers in repositories
     orgs_in_ent = get_organizations(args, token)
     logger.info(f"Number of organizations to process: {len(orgs_in_ent)}")
-    total_repositories = process_organizations(orgs_in_ent, token)
+    total_repositories = process_organizations(orgs_in_ent, token, args.server_url)
 
     logger.info(f"Adding active committers to {len(total_repositories)} repositories")
-    add_active_committers(args.ac_report, total_repositories, token)
+    add_active_committers(args.ac_report, total_repositories, token, args.server_url)
 
     # Generate report and print report
     logger.info(f"Generating report...")
