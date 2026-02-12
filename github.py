@@ -3,6 +3,7 @@ import csv
 import time
 import threading
 import concurrent.futures
+import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from models import Repository
@@ -15,7 +16,7 @@ RATE_LIMIT_LOCK = threading.Lock()
 MAX_WORKERS = 5
 
 
-def add_active_committers(report, repositories, token):
+def add_active_committers(report, repositories, token, server_url="https://api.github.com"):
     try:
         with open(report, "r") as file:
             reader = csv.reader(file)
@@ -31,7 +32,7 @@ def add_active_committers(report, repositories, token):
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             futures = [
                 executor.submit(
-                    get_active_committers_in_last_90_days, repo.org, repo.name, token
+                    get_active_committers_in_last_90_days, repo.org, repo.name, token, server_url
                 )
                 for repo in repositories
             ]
@@ -50,20 +51,20 @@ def get_organizations(args, token):
     if not args.enterprise:
         orgs_in_ent.append(args.organization)
     else:
-        orgs_in_ent = get_orgs_in_ent(args.enterprise, token)
+        orgs_in_ent = get_orgs_in_ent(args.enterprise, token, args.server_url)
     return orgs_in_ent
 
 
-def process_organizations(orgs_in_ent, token):
+def process_organizations(orgs_in_ent, token, server_url="https://api.github.com"):
     total_repositories = []
     for i, org in enumerate(orgs_in_ent, start=1):
         logger.info(f"[{i}/{len(orgs_in_ent)}] Processing organization: {org}")
-        total_repositories.extend(get_ghas_status_for_repos(org, token))
+        total_repositories.extend(get_ghas_status_for_repos(org, token, server_url))
     return total_repositories
 
 
-def get_ghas_status_for_repos(org, token):
-    url = f"https://api.github.com/orgs/{org}/repos?per_page=100"
+def get_ghas_status_for_repos(org, token, server_url="https://api.github.com"):
+    url = f"{server_url}/orgs/{org}/repos?per_page=100"
     headers = {"Authorization": f"token {token}"}
     page = 1
     repos = []
@@ -73,7 +74,24 @@ def get_ghas_status_for_repos(org, token):
 
         handle_rate_limit(response)
 
+        # Check for HTTP errors
+        if response.status_code != 200:
+            logger.error(f"HTTP {response.status_code} error for URL {url}")
+            logger.error(f"Response: {response.text}")
+            if response.status_code == 401:
+                raise Exception(f"Authentication failed for organization {org}. Please check your GitHub token is valid for the server {server_url}")
+            elif response.status_code == 404:
+                raise Exception(f"Organization '{org}' not found or not accessible. Please check the organization name and your token permissions.")
+            else:
+                raise Exception(f"Failed to fetch repositories for organization {org}. Status: {response.status_code}")
+
         data = response.json()
+        
+        # Check if data is a list (successful response) or dict (error response)
+        if not isinstance(data, list):
+            logger.error(f"Unexpected response format: {data}")
+            raise Exception(f"API returned an error: {data.get('message', 'Unknown error')}")
+            
         for repo_data in data:
             owner, name = repo_data["full_name"].split("/")
             ghas_status = (
@@ -93,8 +111,14 @@ def get_ghas_status_for_repos(org, token):
     return repos
 
 
-def get_active_committers_in_last_90_days(org, repo, token):
-    url = "https://api.github.com/graphql"
+def get_active_committers_in_last_90_days(org, repo, token, server_url="https://api.github.com"):
+    # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
+    if server_url != "https://api.github.com":
+        # For GHES: Remove any /api/vX suffix to get base URL (supports v3, v4, v44, etc.)
+        base_url = re.sub(r'/api/v\d+$', '', server_url)
+        graphql_url = f"{base_url}/api/graphql"
+    else:
+        graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}"}
     active_committers = set()
 
@@ -137,20 +161,36 @@ def get_active_committers_in_last_90_days(org, repo, token):
         since = (datetime.now() - timedelta(days=90)).isoformat()
         variables = {"org": org, "repo": repo, "since": since, "after": end_cursor}
         payload = {"query": query, "variables": variables}
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(graphql_url, headers=headers, json=payload)
 
         handle_rate_limit(response)
 
         if response.status_code != 200:
             logger.info(f"Response: {response.json()}")
-            next
+            continue
 
         if response.status_code == 401:
             logger.info(f"Insufficient permissions token provided.")
             break
 
         data = response.json()
+        
+        # Check for GraphQL errors
+        if "errors" in data:
+            logger.error(f"GraphQL errors for {org}/{repo}: {data['errors']}")
+            break
+            
+        # Check if data structure is valid
+        if "data" not in data or not data["data"] or "repository" not in data["data"]:
+            logger.error(f"Invalid GraphQL response structure for {org}/{repo}: {data}")
+            break
+            
         repository = data["data"]["repository"]
+        
+        # Handle case where repository is None (e.g., doesn't exist or no access)
+        if repository is None:
+            logger.warning(f"Repository {org}/{repo} not found or not accessible")
+            break
         refs = repository.get("refs")
         visibility = repository.get("visibility")
 
@@ -182,8 +222,14 @@ def get_active_committers_in_last_90_days(org, repo, token):
     return list(active_committers)
 
 
-def get_orgs_in_ent(enterprise_name, token):
-    url = "https://api.github.com/graphql"
+def get_orgs_in_ent(enterprise_name, token, server_url="https://api.github.com"):
+    # For GHES, the GraphQL endpoint is at /api/graphql, for GitHub.com it's at /graphql
+    if server_url != "https://api.github.com":
+        # For GHES: Remove any /api/vX suffix to get base URL (supports v3, v4, v44, etc.)
+        base_url = re.sub(r'/api/v\d+$', '', server_url)
+        graphql_url = f"{base_url}/api/graphql"
+    else:
+        graphql_url = f"{server_url}/graphql"
     headers = {"Authorization": f"token {token}", "X-Github-Next-Global-ID": "true"}
     orgs = []
     end_cursor = None
@@ -205,7 +251,7 @@ def get_orgs_in_ent(enterprise_name, token):
         """
         variables = {"enterprise": enterprise_name, "after": end_cursor}
         payload = {"query": query, "variables": variables}
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(graphql_url, headers=headers, json=payload)
 
         handle_rate_limit(response)
 

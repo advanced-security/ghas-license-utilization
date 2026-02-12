@@ -55,12 +55,20 @@ def parse_arguments():
         required=False,
         default=0,
     )
+    parser.add_argument(
+        "--server-url",
+        type=str,
+        help="GitHub Server URL (default: https://api.github.com for GitHub.com, or https://HOSTNAME/api/v3 for GHES)",
+        required=False,
+        default="https://api.github.com",
+    )
     args = parser.parse_args()
 
     if args.enterprise is None and args.organization is None:
         parser.error("Either --enterprise or --organization must be provided.")
 
-    token = os.getenv("GITHUB_TOKEN") or args.token
+    # Prioritize command line token over environment variable
+    token = args.token or os.getenv("GITHUB_TOKEN")
     if token is None:
         parser.error(
             "Either GITHUB_TOKEN environment variable or --token must be provided."

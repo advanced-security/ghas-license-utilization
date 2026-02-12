@@ -228,7 +228,7 @@ or `JSON` for machine-parseable output to plug in your GHAS enablement automatio
 
 ```text
 $ python3 main.py --help
-usage: main.py [-h] [--ac-report AC_REPORT] [--enterprise ENTERPRISE] [--organization ORGANIZATION] [--output OUTPUT] [--output-format OUTPUT_FORMAT] [--token TOKEN] [--licenses LICENSES]
+usage: main.py [-h] [--ac-report AC_REPORT] [--enterprise ENTERPRISE] [--organization ORGANIZATION] [--output OUTPUT] [--output-format OUTPUT_FORMAT] [--token TOKEN] [--licenses LICENSES] [--server-url SERVER_URL]
 
 GHAS activation and coverage activation
 
@@ -245,6 +245,8 @@ options:
                         Output format - text or json (default: 'text')
   --token TOKEN         GitHub Personal Access Token (if not set in GITHUB_TOKEN environment variable)
   --licenses LICENSES   Number of (still) available GHAS licenses (default: 0)
+  --server-url SERVER_URL
+                        GitHub Server URL (default: https://api.github.com for GitHub.com, or https://HOSTNAME/api/v3 for GHES)
 ```
 
 You must provide:
@@ -254,6 +256,7 @@ You must provide:
 Other parameters are optional, but note:
 
 - `--ac-report` with the path to the Max Active Committers report. If left empty, the script will gather the data from the GraphQL API.
+- `--server-url` to specify a custom GitHub server URL. By default, it uses `https://api.github.com` for GitHub.com. For GitHub Enterprise Server (GHES), use `https://HOSTNAME/api/v3` (replace `HOSTNAME` with your GHES hostname).
 
 ### Prerequisites
 
@@ -302,6 +305,22 @@ Other parameters are optional, but note:
     # Gather Active Commiters from API
     python3 main.py --org thez-org --licenses 600  --output-format json --output report.json    
     ```
+
+### GitHub Enterprise Server (GHES)
+
+The script supports GitHub Enterprise Server (GHES) by using the `--server-url` parameter. For GHES installations, the API URL format is `https://HOSTNAME/api/v3`, where `HOSTNAME` is your GHES server hostname.
+
+**Example usage with GHES:**
+
+```shell
+# For an organization on GHES
+python3 main.py --server-url https://github.example.com/api/v3 --org my-org --output report.md
+
+# For an enterprise on GHES with active committers report
+python3 main.py --server-url https://github.example.com/api/v3 --ac-report report.csv --enterprise my-enterprise --licenses 100 --output report.md
+```
+
+**Note:** Make sure your Personal Access Token (PAT) has the appropriate permissions for your GHES instance.
 
 ## License
 
