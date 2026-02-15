@@ -93,6 +93,11 @@ def get_ghas_status_for_repos(org, token, server_url="https://api.github.com"):
             raise Exception(f"API returned an error: {data.get('message', 'Unknown error')}")
             
         for repo_data in data:
+            # Always skip archived repositories
+            archived = repo_data.get("archived", False)
+            if archived:
+                continue
+
             owner, name = repo_data["full_name"].split("/")
             ghas_status = (
                 repo_data.get("security_and_analysis", {})
