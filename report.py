@@ -18,9 +18,16 @@ def generate_ghas_coverage_report(repositories):
         else:
             left_over_repos.append(repo)
 
+    for repo in repositories:
+        if repo.committers_fetch_failed:
+            result.repos_with_unknown_committers.append(repo)
+
     for repo in left_over_repos:
         active_committers = repo.get_active_committers()
-        if active_committers and all(
+        if repo.committers_fetch_failed:
+            # Committers are unknown, so we can't tell whether enabling GHAS would consume licenses
+            continue
+        elif active_committers and all(
             committer in committers_in_ghas_repos for committer in active_committers
         ):
             result.current_repos_without_ghas_with_active_committers.append(repo)
@@ -38,6 +45,7 @@ def generate_ghas_coverage_report(repositories):
             and repo not in result.current_repos_without_ghas_and_committers
             and repo not in result.current_repos_with_ghas
             and repo not in result.current_repos_without_ghas_and_public
+            and not repo.committers_fetch_failed
         ):
             left_over_repos.append(repo)
 
@@ -143,6 +151,16 @@ def write_report(report: Report, output_file, output_format):
 
             print(f"Coverage: {report.current_coverage_percentage}%", file=file)
             print(f"--" * 20, file=file)
+            if report.repos_with_unknown_committers:
+                print(f"# WARNING: Repositories with unknown active committers\n", file=file)
+                print(
+                    f"**Active committers could not be fetched for {len(report.repos_with_unknown_committers)} repositories. "
+                    f"They are excluded from the recommendations below, and license counts may be understated. Re-run to retry them.**",
+                    file=file,
+                )
+                for repo in report.repos_with_unknown_committers:
+                    print(f"\t - ", repo, file=file)
+                print(f"--" * 20, file=file)
             print(f"# Increase coverage with currently consumed licenses\n", file=file)
             print(
                 f"**Turning GHAS on following repositories will not consume additional licenses**",

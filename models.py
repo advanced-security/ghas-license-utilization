@@ -10,6 +10,8 @@ class Repository:
             active_committers if active_committers is not None else []
         )
         self.visibility = visibility
+        # True when active committers could not be fetched from the API, so the count is unknown
+        self.committers_fetch_failed = False
 
     def add_committer(self, committer):
         self.active_committers.append(committer)
@@ -33,7 +35,7 @@ class Repository:
         return self.visibility
 
     def __str__(self):
-        return f"Repository: {self.name} | GHAS Status: {self.ghas_status} | Visibility: {self.visibility} | Last Pushed At: {self.pushed_at} | Active Committers: {self.active_committers}"
+        return f"Repository: {self.name} | GHAS Status: {self.ghas_status} | Visibility: {self.visibility} | Last Pushed At: {self.pushed_at} | Active Committers: {'UNKNOWN (fetch failed)' if self.committers_fetch_failed else self.active_committers}"
 
     def to_dict(self):
         return {
@@ -43,6 +45,7 @@ class Repository:
             "visibility": self.visibility,
             "pushed_at": self.pushed_at,
             "active_committers": self.active_committers,
+            "committers_fetch_failed": self.committers_fetch_failed,
         }
 
 
@@ -58,6 +61,7 @@ class Report:
         current_repos_without_ghas_and_public=[],
         new_active_committers=set(),
         max_coverage_repos=[],
+        repos_with_unknown_committers=None,
     ):
         self.all_repos = all_repos
         self.active_committers = active_committers
@@ -74,6 +78,9 @@ class Report:
         )
         self.new_active_committers = new_active_committers
         self.max_coverage_repos = max_coverage_repos
+        self.repos_with_unknown_committers = (
+            repos_with_unknown_committers if repos_with_unknown_committers is not None else []
+        )
 
     @property
     def total_repos(self):
@@ -93,7 +100,10 @@ class Report:
 
     @property
     def current_coverage_percentage(self):
-        return round((self.total_current_repos_with_ghas / self.total_repos * 100), 2)
+        if self.total_repos is not None and self.total_repos > 0:
+            return round((self.total_current_repos_with_ghas / self.total_repos * 100), 2)
+        else:
+            return 100
 
     @property
     def new_coverage_percentage(self):
@@ -158,4 +168,7 @@ class Report:
             ],
             "new_active_committers": list(self.new_active_committers),
             "max_coverage_repos": [repo.to_dict() for repo in self.max_coverage_repos],
+            "repos_with_unknown_committers": [
+                repo.to_dict() for repo in self.repos_with_unknown_committers
+            ],
         }

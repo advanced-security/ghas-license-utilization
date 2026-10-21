@@ -9,3 +9,6 @@ report.txt
 report.md
 report.json
 *.csv
+*.swp
+.venv
+output

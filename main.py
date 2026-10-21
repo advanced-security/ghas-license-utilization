@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from dotenv import load_dotenv
 from github import *
 from report import *
@@ -14,10 +16,12 @@ def main():
     # Gather all data needed for the report - all orgs in the enterprise, repositories in orgs and active committers in repositories
     orgs_in_ent = get_organizations(args, token)
     logger.info(f"Number of organizations to process: {len(orgs_in_ent)}")
-    total_repositories = process_organizations(orgs_in_ent, token, args.server_url)
+    total_repositories = process_organizations(orgs_in_ent, token, args)
 
     logger.info(f"Adding active committers to {len(total_repositories)} repositories")
-    add_active_committers(args.ac_report, total_repositories, token, args.server_url)
+    add_active_committers(
+        args.ac_report, total_repositories, token, checkpoint=args.checkpoint, server_url=args.server_url
+    )
 
     # Generate report and print report
     logger.info(f"Generating report...")

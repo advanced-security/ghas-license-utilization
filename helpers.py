@@ -55,6 +55,21 @@ def parse_arguments():
         required=False,
         default=0,
     )
+
+    parser.add_argument(
+        "--include-inactive",
+        action="store_true",
+        help="Include inactive repositories in the report",
+    )
+
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        help="Path to a checkpoint file. Active committers are saved per repository as they are fetched, "
+        "and repositories already in the file are skipped, so an interrupted run can be resumed",
+        required=False,
+    )
+
     parser.add_argument(
         "--server-url",
         type=str,
@@ -62,6 +77,7 @@ def parse_arguments():
         required=False,
         default="https://api.github.com",
     )
+
     args = parser.parse_args()
 
     if args.enterprise is None and args.organization is None:

@@ -228,7 +228,7 @@ or `JSON` for machine-parseable output to plug in your GHAS enablement automatio
 
 ```text
 $ python3 main.py --help
-usage: main.py [-h] [--ac-report AC_REPORT] [--enterprise ENTERPRISE] [--organization ORGANIZATION] [--output OUTPUT] [--output-format OUTPUT_FORMAT] [--token TOKEN] [--licenses LICENSES] [--server-url SERVER_URL]
+usage: main.py [-h] [--ac-report AC_REPORT] [--enterprise ENTERPRISE] [--organization ORGANIZATION] [--output OUTPUT] [--output-format OUTPUT_FORMAT] [--token TOKEN] [--licenses LICENSES] [--include-inactive] [--checkpoint CHECKPOINT] [--server-url SERVER_URL]
 
 GHAS activation and coverage activation
 
@@ -245,9 +245,15 @@ options:
                         Output format - text or json (default: 'text')
   --token TOKEN         GitHub Personal Access Token (if not set in GITHUB_TOKEN environment variable)
   --licenses LICENSES   Number of (still) available GHAS licenses (default: 0)
+  --include-inactive    Include inactive repositories in the report
+  --checkpoint CHECKPOINT
+                        Path to a checkpoint file. Active committers are saved per repository as they are fetched,
+                        and repositories already in the file are skipped, so an interrupted run can be resumed
   --server-url SERVER_URL
                         GitHub Server URL (default: https://api.github.com for GitHub.com, or https://HOSTNAME/api/v3 for GHES)
 ```
+
+For long runs against large organizations or enterprises, pass `--checkpoint` (e.g. `--checkpoint output/my-org.checkpoint.jsonl`). If the run is interrupted, re-run the same command to pick up where it left off. Repositories whose active committers could not be fetched are not saved to the checkpoint (so they are retried on the next run) and are listed under a warning in the report. Delete the checkpoint file to start fresh, since saved committers reflect the 90 days before they were fetched.
 
 You must provide:
 
